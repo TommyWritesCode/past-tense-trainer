@@ -56,21 +56,15 @@
   color: var(--accent);
 }
 
-.sentence {
-  font-size: 1.25rem;
-  line-height: 1.7;
-  color: var(--text);
+.sentenceWrapper {
+  margin-bottom: 6px;
 }
 
-.sentence strong {
-  color: var(--yellow);
-  letter-spacing: 0.05em;
-}
-
-.sentence em {
-  color: var(--text-muted);
-  font-style: normal;
-  font-size: 0.95em;
+.hoverHint {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  font-style: italic;
+  margin-top: 6px;
 }
 
 /* DECISION ZONE */

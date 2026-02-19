@@ -1,23 +1,32 @@
 import { useEffect, useRef, useCallback } from 'react';
 import HintBox from './HintBox.jsx';
 import FeedbackBox from './FeedbackBox.jsx';
+import SpanishSentence from './SpanishSentence.jsx';
 import styles from './PracticeView.module.css';
-
-function formatSentence(text) {
-  // Bold the blank and infinitive
-  return text.replace(/(____)(\s*\([^)]+\))/, (_, blank, inf) => `<strong>${blank}</strong><em>${inf}</em>`);
-}
 
 export default function PracticeView({
   exercise, phase, selectedTense, userInput, feedback, showHint,
   onClassify, onInputChange, onSubmit, onNext, onShowHint,
 }) {
   const inputRef = useRef(null);
+  // Guard: after submitting, ignore Enter/Space for 400ms so the same
+  // keypress doesn't immediately also fire onNext and wipe the feedback.
+  const justSubmittedRef = useRef(false);
 
   useEffect(() => {
     if (phase === 'conjugate' && inputRef.current) {
       inputRef.current.focus();
     }
+  }, [phase]);
+
+  // When phase transitions TO feedback, arm the cooldown
+  const prevPhaseRef = useRef(phase);
+  useEffect(() => {
+    if (prevPhaseRef.current === 'conjugate' && phase === 'feedback') {
+      justSubmittedRef.current = true;
+      setTimeout(() => { justSubmittedRef.current = false; }, 400);
+    }
+    prevPhaseRef.current = phase;
   }, [phase]);
 
   const handleKeyDown = useCallback((e) => {
@@ -27,7 +36,9 @@ export default function PracticeView({
     } else if (phase === 'conjugate') {
       if (e.key === 'Enter') onSubmit();
     } else if (phase === 'feedback') {
-      if (e.key === 'Enter' || e.key === ' ') onNext();
+      if ((e.key === 'Enter' || e.key === ' ') && !justSubmittedRef.current) {
+        onNext();
+      }
     }
   }, [phase, onClassify, onSubmit, onNext]);
 
@@ -64,10 +75,10 @@ export default function PracticeView({
             </button>
           )}
         </div>
-        <p
-          className={styles.sentence}
-          dangerouslySetInnerHTML={{ __html: formatSentence(exercise.contextText) }}
-        />
+        <p className={styles.sentenceWrapper}>
+          <SpanishSentence text={exercise.contextText} />
+        </p>
+        <p className={styles.hoverHint}>Hover any word for English</p>
       </div>
 
       {/* Decision Zone */}
@@ -143,7 +154,7 @@ export default function PracticeView({
             type="text"
             value={userInput}
             onChange={e => onInputChange(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && phase === 'conjugate' && onSubmit()}
+            // No onKeyDown here — window listener is the single source of truth
             placeholder={phase === 'classify' ? '—' : `Conjugate: ${exercise.verb} (${exercise.subject})`}
             disabled={phase !== 'conjugate'}
             autoComplete="off"
