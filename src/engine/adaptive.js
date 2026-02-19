@@ -206,9 +206,9 @@ export function selectNext(exercises, stats, currentId = null) {
   const scored = pool.map(e => ({ exercise: e, score: scoreExercise(e, stats) }));
   scored.sort((a, b) => a.score - b.score);
 
-  // Pick from top 3 with weighted random to avoid being too deterministic
-  const topK = Math.min(3, scored.length);
-  const weights = [0.6, 0.3, 0.1].slice(0, topK);
+  // Pick from top 6 with weighted random — more variety, still attacks weaknesses
+  const topK = Math.min(6, scored.length);
+  const weights = [0.35, 0.25, 0.17, 0.11, 0.07, 0.05].slice(0, topK);
   const totalWeight = weights.reduce((a, b) => a + b, 0);
   let rand = Math.random() * totalWeight;
   for (let i = 0; i < topK; i++) {
