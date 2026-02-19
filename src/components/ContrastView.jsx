@@ -1,31 +1,36 @@
 import { useState, useEffect, useCallback } from 'react';
 import styles from './ContrastView.module.css';
 
+function randomTense() {
+  return Math.random() > 0.5 ? 'PRETERITE' : 'IMPERFECT';
+}
+
 export default function ContrastView({ exercises, onResult }) {
   const [idx, setIdx] = useState(() => Math.floor(Math.random() * exercises.length));
   const [selected, setSelected] = useState(null); // 'A' | 'B'
   const [showFeedback, setShowFeedback] = useState(false);
+  // Re-randomized on every new exercise
+  const [targetTense, setTargetTense] = useState(randomTense);
 
   const exercise = exercises[idx];
   if (!exercise) return null;
 
-  // The "question" asks which sentence matches a particular meaning
-  // We randomize which is the "correct" answer each time
-  const [targetTense] = useState(() => Math.random() > 0.5 ? 'PRETERITE' : 'IMPERFECT');
   const correctChoice = exercise.tenseA === targetTense ? 'A' : 'B';
-  const targetDescription = targetTense === 'PRETERITE' ? exercise.promptB : exercise.promptA;
+  const targetDescription = targetTense === 'IMPERFECT' ? exercise.promptA : exercise.promptB;
+  const correctSentence = correctChoice === 'A' ? exercise.sentenceA : exercise.sentenceB;
+  const correctPrompt = correctChoice === 'A' ? exercise.promptA : exercise.promptB;
 
   const handleSelect = (choice) => {
     if (showFeedback) return;
     setSelected(choice);
     setShowFeedback(true);
-    const isCorrect = choice === correctChoice;
-    onResult(isCorrect);
+    onResult(choice === correctChoice);
   };
 
   const handleNext = useCallback(() => {
     setSelected(null);
     setShowFeedback(false);
+    setTargetTense(randomTense());
     setIdx(i => (i + 1) % exercises.length);
   }, [exercises.length]);
 
@@ -60,43 +65,41 @@ export default function ContrastView({ exercises, onResult }) {
       </div>
 
       <div className={styles.choices}>
-        <button
-          className={`${styles.choice}
-            ${selected === 'A' ? (correctChoice === 'A' ? styles.right : styles.wrong) : ''}
-            ${showFeedback && correctChoice === 'A' ? styles.reveal : ''}
-            ${showFeedback ? styles.disabled : ''}
-          `}
-          onClick={() => handleSelect('A')}
-          disabled={showFeedback}
-        >
-          <span className={styles.choiceKey}>[1]</span>
-          <div className={styles.choiceContent}>
-            <span className={styles.choiceLang}>ES</span>
-            <span className={styles.choiceText}>{exercise.sentenceA}</span>
-            {showFeedback && (
-              <span className={styles.choiceSub}>{exercise.promptA}</span>
-            )}
-          </div>
-        </button>
+        {['A', 'B'].map((choice) => {
+          const sentence = choice === 'A' ? exercise.sentenceA : exercise.sentenceB;
+          const prompt = choice === 'A' ? exercise.promptA : exercise.promptB;
+          const isSelected = selected === choice;
+          const isTheCorrect = correctChoice === choice;
 
-        <button
-          className={`${styles.choice}
-            ${selected === 'B' ? (correctChoice === 'B' ? styles.right : styles.wrong) : ''}
-            ${showFeedback && correctChoice === 'B' ? styles.reveal : ''}
-            ${showFeedback ? styles.disabled : ''}
-          `}
-          onClick={() => handleSelect('B')}
-          disabled={showFeedback}
-        >
-          <span className={styles.choiceKey}>[2]</span>
-          <div className={styles.choiceContent}>
-            <span className={styles.choiceLang}>ES</span>
-            <span className={styles.choiceText}>{exercise.sentenceB}</span>
-            {showFeedback && (
-              <span className={styles.choiceSub}>{exercise.promptB}</span>
-            )}
-          </div>
-        </button>
+          let choiceClass = styles.choice;
+          if (showFeedback) {
+            choiceClass += ' ' + styles.disabled;
+            if (isSelected && isTheCorrect) choiceClass += ' ' + styles.right;
+            else if (isSelected && !isTheCorrect) choiceClass += ' ' + styles.wrong;
+            else if (!isSelected && isTheCorrect) choiceClass += ' ' + styles.reveal;
+          }
+
+          return (
+            <button
+              key={choice}
+              className={choiceClass}
+              onClick={() => handleSelect(choice)}
+              disabled={showFeedback}
+            >
+              <span className={styles.choiceKey}>[{choice === 'A' ? 1 : 2}]</span>
+              <div className={styles.choiceContent}>
+                <span className={styles.choiceLang}>ES</span>
+                <span className={styles.choiceText}>{sentence}</span>
+                {showFeedback && (
+                  <span className={styles.choiceSub}>{prompt}</span>
+                )}
+              </div>
+              {showFeedback && isTheCorrect && (
+                <span className={styles.correctBadge}>✓ correct</span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {showFeedback && (
@@ -104,6 +107,16 @@ export default function ContrastView({ exercises, onResult }) {
           <p className={styles.feedbackResult}>
             {isCorrect ? '✓ Correct!' : '✗ Not quite.'}
           </p>
+
+          {/* Show correct answer explicitly when wrong */}
+          {!isCorrect && (
+            <div className={styles.correctAnswer}>
+              <span className={styles.correctAnswerLabel}>Correct answer:</span>
+              <p className={styles.correctAnswerSentence}>"{correctSentence}"</p>
+              <p className={styles.correctAnswerMeaning}>{correctPrompt}</p>
+            </div>
+          )}
+
           <div className={styles.verbTag}>
             <span className={styles.verbLabel}>Verb: </span>
             <strong>{exercise.verb}</strong>

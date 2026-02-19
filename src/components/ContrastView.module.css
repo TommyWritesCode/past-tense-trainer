@@ -86,10 +86,21 @@
   background: var(--red-dim);
 }
 
-.choice.reveal:not(.right) {
+.choice.reveal {
   border-color: var(--green);
   background: var(--green-dim);
-  opacity: 0.7;
+}
+
+.correctBadge {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--green);
+  background: rgba(76, 175, 125, 0.15);
+  border-radius: 20px;
+  padding: 2px 8px;
 }
 
 .choiceKey {
@@ -161,6 +172,35 @@
 
 .feedbackOk .feedbackResult { color: var(--green); }
 .feedbackErr .feedbackResult { color: var(--red); }
+
+.correctAnswer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+}
+
+.correctAnswerLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--green);
+}
+
+.correctAnswerSentence {
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--text);
+}
+
+.correctAnswerMeaning {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
 
 .verbTag {
   font-size: 0.85rem;
