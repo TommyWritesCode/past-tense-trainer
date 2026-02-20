@@ -171,6 +171,51 @@ const WORD_MAP = {
   astronauta:'astronaut', adolescente:'teenager',
   cuento:'story', abuelo:'grandfather',
   mar:'sea', misa:'church mass',
+
+  // School & work
+  ejercicio:'exercise', clase:'class', clases:'classes',
+  tarea:'homework/task', informe:'report', versiones:'versions',
+  conferencia:'conference/lecture', fecha:'date', límite:'limit',
+  entradas:'tickets', número:'number', partes:'parts',
+
+  // Travel & places
+  viaje:'trip/journey', viajes:'trips', plaza:'square/plaza',
+  lago:'lake', río:'river', campo:'field/countryside',
+  jardín:'garden', rincón:'corner/nook', metro:'subway/metro',
+  panadería:'bakery', gimnasio:'gym', radio:'radio',
+
+  // Food & drink
+  té:'tea', menú:'menu', camarero:'waiter', mesero:'waiter',
+  pizza:'pizza', sushi:'sushi', paella:'paella',
+
+  // Sports
+  campeonato:'championship', gol:'goal', goles:'goals',
+  árbitro:'referee', maratón:'marathon',
+
+  // People & roles
+  enfermera:'nurse', enfermero:'nurse', actriz:'actress',
+  chef:'chef', paciente:'patient',
+
+  // Body & health
+  ojos:'eyes', ojo:'eye', piernas:'legs', pierna:'leg',
+  miedo:'fear', operación:'operation/surgery', temperatura:'temperature',
+  dolor:'pain/ache',  // already defined above, but keeping for clarity
+
+  // Abstract & misc nouns
+  verdad:'truth', gracias:'thank you', cumpleaños:'birthday',
+  debajo:'under/beneath', encima:'on top of', algún:'some/any',
+  liderazgo:'leadership', infancia:'childhood', situación:'situation',
+  crisis:'crisis', historia:'history/story', paseo:'walk/stroll',
+  billetera:'wallet', cartera:'wallet/bag', paquete:'package',
+  medianoche:'midnight', madrugada:'early morning/dawn',
+  ambiente:'atmosphere', vista:'view', copa:'cup/trophy',
+  premio:'prize/award', tesoro:'treasure',
+
+  // Adjectives (additional)
+  tímida:'shy/timid', tímido:'shy', valiente:'brave',
+  apasionado:'passionate', apasionada:'passionate (f)',
+  estrechas:'narrow (f pl)', estrecha:'narrow',
+  dieciocho:'eighteen', decorada:'decorated',
 };
 
 // ─── Irregular verb forms → infinitive ───────────────────────────────────────
@@ -237,6 +282,30 @@ const VERB_FORMS = {
   empezaba:'empezar', empezabas:'empezar', empezaban:'empezar',
   salí:'salir', saliste:'salir', salió:'salir', salimos:'salir', salieron:'salir',
   salía:'salir', salías:'salir', salíamos:'salir', salían:'salir',
+  // creer
+  creía:'creer', creías:'creer', creíamos:'creer', creían:'creer',
+  creí:'creer', creíste:'creer', creyó:'creer', creímos:'creer', creyeron:'creer',
+  // servir
+  servía:'servir', servías:'servir', servíamos:'servir', servían:'servir',
+  serví:'servir', serviste:'servir', sirvió:'servir', servimos:'servir', sirvieron:'servir',
+  // elegir
+  elegía:'elegir', elegías:'elegir', elegíamos:'elegir', elegían:'elegir',
+  elegí:'elegir', elegiste:'elegir', eligió:'elegir', elegimos:'elegir', eligieron:'elegir',
+  // spelling-change preterites
+  busqué:'buscar', marqué:'marcar', pegué:'pegar',
+  practiqué:'practicar', toqué:'tocar', pagué:'pagar',
+  llegué:'llegar', jugué:'jugar', empecé:'empezar',
+  // other irregular forms
+  firmó:'firmar', firmé:'firmar', firmaron:'firmar',
+  saludó:'saludar', saludaron:'saludar',
+  celebró:'celebrar', celebraron:'celebrar',
+  ordenó:'ordenar', ordenaron:'ordenar',
+  tomó:'tomar', tomaron:'tomar', tomé:'tomar',
+  dejó:'dejar', dejaron:'dejar', dejé:'dejar',
+  cruzó:'cruzar', cruzamos:'cruzar',
+  envié:'enviar', envió:'enviar', enviaron:'enviar',
+  avisé:'avisar', avisó:'avisar',
+  entrenó:'entrenar', entrenaron:'entrenar',
 };
 
 // ─── Infinitive → English ─────────────────────────────────────────────────────
@@ -279,7 +348,17 @@ const VERB_TRANSLATIONS = {
   pagar:'to pay', cobrar:'to charge/collect', reservar:'to reserve/book',
   cancelar:'to cancel', parar:'to stop', continuar:'to continue',
   quedarse:'to stay/remain', irse:'to leave', casarse:'to get married',
-  ladrar:'to bark', quemar:'to burn', ladrar:'to bark',
+  ladrar:'to bark', quemar:'to burn',
+  // New verbs
+  nevar:'to snow', brillar:'to shine', marcar:'to score/mark',
+  practicar:'to practice', firmar:'to sign', pegar:'to stick/glue',
+  quedar:'to meet up/remain', saludar:'to greet', emigrar:'to emigrate',
+  ordenar:'to order/organize', entrenar:'to train', elegir:'to choose/elect',
+  creer:'to believe/think', recibir:'to receive', avisar:'to notify/warn',
+  tomar:'to take/drink', cruzar:'to cross', enviar:'to send',
+  celebrar:'to celebrate', dejar:'to leave/let', explorar:'to explore',
+  comenzar:'to begin/start', sentar:'to sit', sentarse:'to sit down',
+  levantar:'to lift/get up', servir:'to serve', cambiar:'to change',
 };
 
 // ─── Regular ending patterns ──────────────────────────────────────────────────
