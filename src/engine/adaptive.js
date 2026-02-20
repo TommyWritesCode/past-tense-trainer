@@ -197,16 +197,46 @@ function scoreExercise(exercise, stats, recentIds) {
 }
 
 export function selectNext(exercises, stats, currentId = null) {
-  if (!exercises || exercises.length === 0) return null;
+  if (!exercises || exercises.length === null) return null;
 
   const pool = exercises.filter(e => e.id !== currentId);
   if (pool.length === 0) return exercises[0];
 
-  // Sort by score (ascending) — lowest score = highest priority
-  const scored = pool.map(e => ({ exercise: e, score: scoreExercise(e, stats) }));
+  // ── Tense balancing ───────────────────────────────────────────────────────
+  // Look at last 6 exercises; if heavily skewed, boost the under-shown tense
+  const recent = (stats.recentResults || []).slice(0, 6);
+  let pretCount = 0, impCount = 0;
+  // We track tense per result via tenseAccuracy EMA, but we don't store
+  // per-rep tense. Instead use tenseAccuracy to detect imbalance.
+  const pretAcc = stats.tenseAccuracy?.PRETERITE;
+  const impAcc  = stats.tenseAccuracy?.IMPERFECT;
+  // Simple rule: alternate slightly toward rarer tense if one has been seen a lot
+  const lastSeen = stats.lastSeen || {};
+  pool.forEach(e => {
+    const ls = lastSeen[e.id];
+    if (!ls) return;
+    const ago = (Date.now() - new Date(ls).getTime()) / 1000;
+    if (ago < 300) {
+      if (e.expectedTense === 'PRETERITE') pretCount++;
+      else impCount++;
+    }
+  });
+  const totalRecent = pretCount + impCount;
+
+  // ── Score each exercise ───────────────────────────────────────────────────
+  const scored = pool.map(e => {
+    let score = scoreExercise(e, stats);
+    // If preterite is under-represented recently, boost preterite exercises
+    if (totalRecent >= 3) {
+      const pretRatio = pretCount / totalRecent;
+      if (pretRatio < 0.35 && e.expectedTense === 'PRETERITE') score -= 0.4;
+      if (pretRatio > 0.65 && e.expectedTense === 'IMPERFECT') score -= 0.4;
+    }
+    return { exercise: e, score };
+  });
   scored.sort((a, b) => a.score - b.score);
 
-  // Pick from top 6 with weighted random — more variety, still attacks weaknesses
+  // Pick from top 6 with weighted random
   const topK = Math.min(6, scored.length);
   const weights = [0.35, 0.25, 0.17, 0.11, 0.07, 0.05].slice(0, topK);
   const totalWeight = weights.reduce((a, b) => a + b, 0);
